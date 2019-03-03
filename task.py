@@ -28,7 +28,7 @@ class TaskManager:
         menu_text = self.generate_menu_text(self.main_menu, "\nWhat would you like to do?")
         selection = None
         while selection != 'q':
-            selection = self.request_int(menu_text, _max=len(self.main_menu))
+            selection = self.request_int(menu_text, _max=len(self.main_menu) - 1)
             self.main_menu[selection](self)
 
     @staticmethod
@@ -50,7 +50,7 @@ class TaskManager:
     def find_tasks_with_employee_name(self) -> [Task]:
         """find by employee"""
         menu_text = self.generate_menu_text(self.search_by_employee, "\nEnter a search method:")
-        selection = self.request_int(menu_text, _max=len(self.search_by_employee))
+        selection = self.request_int(menu_text, _max=len(self.search_by_employee) - 1)
         tasks = self.search_by_employee[selection](self)
         return tasks
 
@@ -60,7 +60,7 @@ class TaskManager:
         print("\nSelect an employee:\n")
         for i, employee in enumerate(employees):
             print("[{}] {}".format(i, employee.employee_name))
-        employee = self.request_int(_max=len(employees))
+        employee = self.request_int(_max=len(employees) - 1)
         return Task.select().where(Task.employee_name == employees[employee].employee_name)
 
     def find_tasks_with_employee_name_from_search(self) -> [Task]:
@@ -76,7 +76,7 @@ class TaskManager:
             print("\nDates available:\n")
             for i, task in enumerate(tasks):
                 print("[{}]: {}".format(i, task.timestamp))
-            date = self.request_int(_max=len(tasks))
+            date = self.request_int(_max=len(tasks) - 1)
             tasks = Task.select().order_by(Task.timestamp.asc()).where(
                 Task.timestamp == tasks[date].timestamp)
         return tasks
@@ -126,7 +126,7 @@ class TaskManager:
     def lookup_tasks(self):
         """view previous tasks"""
         menu_text = self.generate_menu_text(self.search_menu, "\nEnter a search method:")
-        selection = self.request_int(menu_text, _max=len(self.search_menu))
+        selection = self.request_int(menu_text, _max=len(self.search_menu) - 1)
         tasks = self.search_menu[selection](self)
         if not len(tasks):
             print("\nNo tasks available\n")

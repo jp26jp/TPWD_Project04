@@ -30,4 +30,5 @@ class TestTaskManager(TestCase):
         pass
 
     def test_print_task(self):
-        task.TaskManager.print_task(task.TaskManager, task.Task("Bob", "Did stuff", 10, "Notes", "2019-02-25"))
+        task.TaskManager.print_task(task.TaskManager,
+                                    task.Task("Bob", "Did stuff", 10, "Notes", "2019-02-25"))

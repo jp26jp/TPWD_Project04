@@ -7,10 +7,20 @@ import string
 import random
 import task
 
-test_db = SqliteDatabase(':memory:')
-
 
 class TestTaskManager(unittest.TestCase):
+
+    def switch_to_memory_database(self):
+        task.db = SqliteDatabase(':memory:')
+        task.Task._meta.database = task.db
+        task.db.connect()
+        task.db.create_tables([task.Task], safe=True)
+
+    def test_add_task(self):
+        self.switch_to_memory_database()
+        a_task = task.TaskManager.save_task(task, "John", "Ran around in circles", 30, "Notes to take note about")
+        self.assertTrue(a_task)
+
     def test_request_int(self):
         inputs = [
             1,
@@ -33,7 +43,7 @@ class TestTaskManager(unittest.TestCase):
             self.assertRaises(UserWarning)
 
     def test_save_task(self):
-        self.assertTrue(TaskManager.save_task(task.TaskManager, "Bob", "Stuff", 10, "None"))
+        self.assertTrue(TaskManager.save_task(task, "Bob", "Stuff", 10, "None"))
 
     def test_generate_menu_text(self):
         menu = OrderedDict([(0, self.dummy_method), (1, self.dummy_method2)])
@@ -53,14 +63,12 @@ class TestTaskManager(unittest.TestCase):
                                                                  task_notes="None", timestamp="2019-03-04"))
         self.assertEqual(expected_string, task_string)
 
-    def test_isstr(self):
-        self.assertTrue(TaskManager.isstr("string"))
-
-    def test_isint(self):
-        self.assertTrue(TaskManager.isint(1))
-
     def dummy_method(self):
         """a super dumb method"""
 
     def dummy_method2(self):
         """an even dumber method"""
+
+
+if __name__ == '__main__':
+    unittest.main()

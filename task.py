@@ -1,7 +1,6 @@
-import datetime
-
 from collections import OrderedDict
 from peewee import *
+import datetime
 
 db = SqliteDatabase("tasks.db")
 short_separator_string = "\n{}".format("=" * 30)
@@ -25,7 +24,8 @@ class TaskManager:
         """Create the database and the table if they don't exist"""
         db.connect(reuse_if_open=True)
         db.create_tables([Task], safe=True)
-        self.display_menu(self.main_menu, "\nWhat would you like to do?")
+        while True:
+            self.display_menu(self.main_menu, "\nWhat would you like to do?")
 
     def request_int(self, message="\nEnter selection: ", _max=-1):
         while True:
@@ -50,9 +50,9 @@ class TaskManager:
         employees = Task.select(Task.employee).distinct()
         print("\nSelect an employee:\n")
         for i, employee in enumerate(employees):
-            print("[{}] {}".format(i, employee.employee_name))
+            print("[{}] {}".format(i, employee.employee))
         employee = self.request_int(_max=len(employees) - 1)
-        return Task.select().where(Task.employee == employees[employee].employee_name)
+        return Task.select().where(Task.employee == employees[employee].employee)
 
     def find_tasks_with_employee_name_from_search(self) -> [Task]:
         """manually enter name"""
@@ -92,7 +92,8 @@ class TaskManager:
         return False
 
     def save_task(self, employee: str, task_name: str, time_worked: int, task_notes: str) -> bool:
-        if self.isstr(employee) and self.isstr(task_name) and self.isint(time_worked) and self.isstr(task_notes):
+        if isinstance(employee, str) and isinstance(task_name, str) \
+                and isinstance(time_worked, int) and isinstance(task_notes, str):
             Task.create(employee=employee, task_name=task_name, time_worked=time_worked, task_notes=task_notes)
             print("\nSaved!\n")
             return True
@@ -108,7 +109,7 @@ class TaskManager:
 
     def print_tasks(self, tasks):
         for task in tasks:
-            self.generate_task_string(task)
+            print(self.generate_task_string(task))
         print("")
 
     @staticmethod
@@ -135,14 +136,6 @@ class TaskManager:
         selection = self.request_int(menu_text, _max=len(self.main_menu) - 1)
         return menu[selection](self)
 
-    @staticmethod
-    def isstr(string):
-        return isinstance(string, str)
-
-    @staticmethod
-    def isint(integer):
-        return isinstance(integer, int)
-
     main_menu = OrderedDict([
         (0, add_task),
         (1, lookup_tasks),
@@ -159,3 +152,7 @@ class TaskManager:
         (0, find_tasks_with_employee_name_from_list),
         (1, find_tasks_with_employee_name_from_search),
     ])
+
+
+if __name__ == '__main__':
+    TaskManager()

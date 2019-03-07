@@ -133,7 +133,7 @@ class TaskManager:
 
     def display_menu(self, menu, message="\nEnter a search method:"):
         menu_text = self.generate_menu_text(menu, message)
-        selection = self.request_int(menu_text, _max=len(self.main_menu) - 1)
+        selection = self.request_int(menu_text, _max=len(menu) - 1)
         return menu[selection](self)
 
     main_menu = OrderedDict([
